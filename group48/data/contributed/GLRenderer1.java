@@ -22,7 +22,7 @@ public class GLRenderer1 {
             tileBatch.getShader().unbind();
         }
     }
-
+    
     public void loadRegionTextures(Region region) {
         List<Integer> handles = TileRegistry.getUsedImageHandlesForRegion(region);
         tileBatch.bindTileTextures(handles);
