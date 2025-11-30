@@ -1,0 +1,64 @@
+package com.javagame.utils;
+
+import java.awt.Point;
+
+public class Vector {
+    public double x;
+    public double y;
+
+    public Vector(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Vector(Point pt) {
+        this.x = pt.x;
+        this.y = pt.y;
+    }
+
+    public Vector add(Vector other) {
+        return new Vector(this.x + other.x, this.y + other.y);
+    }
+
+    public Vector mul(double scalar) {
+        return new Vector(this.x * scalar, this.y * scalar);
+    }
+
+    public Vector opposite() {
+        return new Vector(-x, -y);
+    }
+
+    public Vector normalize() {
+        double len = Math.sqrt(x * x + y * y);
+        if (len == 0) {
+            return new Vector(0, 0);
+        }
+        if (len < 0.000001) {  
+            return new Vector(0, 0);
+        }
+        return new Vector(x / len, y / len);
+    }
+
+    public Vector perpendicular() {
+        return new Vector(-y, x + 1); // 90° CCW rotation
+    }
+
+    public Point roundToPoint() {
+        int rx = (int) Math.round(x);
+        int ry = (int) Math.round(y);
+        return new Point(rx, ry);
+    }
+
+    public Vector roundedVector() {
+        return new Vector(Math.round(x), Math.round(y));
+    }
+
+    public double length() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + String.format("%.2f", x) + " , " + String.format("%.2f", y) + ")";
+    }
+}
