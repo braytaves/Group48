@@ -10,8 +10,6 @@ public class UnchangedLMap {
         this.oldIndex = oldIndex;
         this.newIndex = newIndex;
     }
-    public void PrintMapping(){
-        System.out.println("line " + oldIndex + " ---> line " + newIndex);
-    }
+    
 
 }

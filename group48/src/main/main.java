@@ -11,24 +11,31 @@ public class main {
                 String path7 = "data/contributed/LCS_demo_new"; //path for file 1
                 String path8 = "data/provided/asdf_1.java"; //path for file 1
                 String path9 = "data/provided/asdf_2.java"; //path for file 1
-
+                System.out.println("\n");
+                
                 //STEP 1: PREPROCESSING
-
-                List<String> pFile1 = Preprocessor.process(path6);  //processed files
-                List<String> pFile2 = Preprocessor.process(path7);  //as lists of strings
-
-                for (String line : pFile1){
-                        System.out.println(line);
-                }
-                for (String line : pFile2){
-                        System.out.println(line);
-                }
+                FileData file1 = new FileData(path6);
+                FileData file2 = new FileData(path7);
+                Preprocessor.process(file1);  //processed files
+                Preprocessor.process(file2);  //as lists of strings
+                file1.printContents();
+                file1.printContexts();
+                
+                //file1.printContentTokens();
+                // for (String line : pFile1){
+                //         System.out.println(line);
+                // }
+                // for (String line : pFile2){
+                //         System.out.println(line);
+                // }
 
                 //STEP 2: MAPPING UNCHANGED LINES
 
-                List<UnchangedLMap> lineMappings = UnchangedMapper.map(pFile1, pFile2);
-                for (UnchangedLMap mapping : lineMappings){
-                        mapping.PrintMapping();
-                }
+                UnchangedMapper.map(file1, file2);
+                // for (UnchangedLMap mapping : lineMappings){
+                //         mapping.PrintMapping();
+                // }
+                // file1.printMappings();
+                // file2.printMappings();
         }
 }
