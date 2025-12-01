@@ -1,0 +1,13 @@
+# Eclipse
+*.project
+*.classpath
+.settings/
+.metadata/
+
+bin/
+
+# VS Code
+.vscode/
+
+# Java
+*.class
