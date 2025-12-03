@@ -18,7 +18,7 @@ public class FileData {
             }
         }
     }
-    public void printContexts() {
+    public void printContextsTokens() {
         System.out.println("\nContext tokens of file: '" + path + "'\n");
 
         for (LineData lineData : lineObjects) {
