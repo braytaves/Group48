@@ -18,11 +18,11 @@ public class FileData {
             }
         }
     }
-    public void printContexts() {
+    public void printContextsTokens() { //added "Tokens" to variable name to match "printContentTokens" variable
         System.out.println("\nContext tokens of file: '" + path + "'\n");
 
         for (LineData lineData : lineObjects) {
-            lineData.PrintContext();
+            lineData.PrintContextTokens();
         }
     }
     public void printContentTokens() {

@@ -62,23 +62,23 @@ public class Preprocessor {
     }
 
     public static void distributeContext(FileData file) {
-    List<LineData> lines = file.getLineObjects();
-    int total = lines.size();
+        List<LineData> lines = file.getLineObjects();
+        int total = lines.size();
 
-    for (int i = 0; i < total; i++) {
-        List<String> contextTokens = new ArrayList<>();
+        for (int i = 0; i < total; i++) {
+            List<String> contextTokens = new ArrayList<>();
 
-        // gather lines from i-4 through i+4
-        for (int d = -4; d <= 4; d++) {
-            int idx = i + d;
-            if (idx >= 0 && idx < total) {
-                contextTokens.addAll(lines.get(idx).getContentTokens());
+            // gather lines from i-4 through i+4
+            for (int d = -4; d <= 4; d++) {
+                int idx = i + d;
+                if (idx >= 0 && idx < total) {
+                    contextTokens.addAll(lines.get(idx).getContentTokens());
+                }
             }
-        }
 
-        lines.get(i).setContextTokens(contextTokens);
+            lines.get(i).setContextTokens(contextTokens);
+        }
     }
-}
 
 
     // input: filePath, ouput: List of all lines in the file, as Strings

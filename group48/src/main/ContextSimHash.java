@@ -17,8 +17,6 @@ public class ContextSimHash {
         List<LineData> lines = fileData.getLineObjects();
         int n = lines.size();
 
-        System.out.println("\n=== Context SimHash Values for File: " + fileData.getPath() + " ===\n");
-
         for (int i = 0; i < n; i++) {
 
             // Build context tokens (top 4 + line + bottom 4)
@@ -48,12 +46,7 @@ public class ContextSimHash {
 
             // Store inside LineData
             lines.get(i).contextHash = contextHash;
-
-            // === PRINT VALUE HERE ===
-            System.out.println("Line " + i + " ContextHash: " + contextHash);
         }
-
-        System.out.println("\n=== End of Context Hash Output ===\n");
     }
 
     /**
