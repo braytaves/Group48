@@ -67,7 +67,7 @@ public class LineData {
     public void PrintContent(){
         System.out.println(index + ": " + content);
     }
-    public void PrintContext(){
+    public void PrintContextTokens(){
         System.out.println("Line " + index + ": ");
         for (String token : contextTokens){
             System.out.print("[ " +token + " ], ");
