@@ -1,48 +1,65 @@
-package main; 
-import java.util.List;
+//Desired output when comparing asdf_1 to asdf_2:
+
+//Mapping file1 to file2:
+//line 1 ---> line 1
+//line 2 ---> line 2
+//line 3 ---> line 3
+//line 5 ---> line 5
+//line 7 ---> line -1
+//line 9 ---> line -1
+//line 11 ---> line 9
+//line 12 ---> line 11
+
+package main;
+
 public class main {
         public static void main(String[] args) {
-        	String path1 = "data/contributed/Vector_old"; //path for file 1
-            String path2 = "data/contributed/Vector_new"; //path for file 2
-            String path3 = "data/contributed/GLRenderer_old.java"; //path for file 1
-            String path4 = "data/contributed/LCS_test_old"; //path for file 1
-            String path5 = "data/contributed/LCS_test_new"; //path for file 1
-            String path6 = "data/contributed/LCS_demo_old"; //path for file 1
-            String path7 = "data/contributed/LCS_demo_new"; //path for file 1
-            String path8 = "data/provided/asdf_1.java"; //path for file 1
-            String path9 = "data/provided/asdf_2.java"; //path for file 1
-            System.out.println("\n");
-                System.out.println("\n");
-                
-                //STEP 1: PREPROCESSING
+
+                //comparing asdf_1 to asdf_2
+                String path8 = "data/provided/asdf_1.java";
+                String path9 = "data/provided/asdf_2.java";
+
                 FileData file1 = new FileData(path8);
                 FileData file2 = new FileData(path9);
-                Preprocessor.process(file1);  //processed files
-                Preprocessor.process(file2);  //as lists of strings
-                file1.printContents();
-                file1.printContexts();
-                
-                //file1.printContentTokens();
-                // for (String line : pFile1){
-                //         System.out.println(line);
-                // }
-                // for (String line : pFile2){
-                //         System.out.println(line);
-                // }
 
-                //STEP 2: MAPPING UNCHANGED LINES
+                Preprocessor.process(file1);
+                Preprocessor.process(file2);
 
-                UnchangedMapper.map(file1, file2);
-                // for (UnchangedLMap mapping : lineMappings){
-                //         mapping.PrintMapping();
-                // }
-                // file1.printMappings();
-                // file2.printMappings();
+                //mapping unchanged lines
+                UnchangedMapper2.map(file1, file2);
+
+                //System.out.println("File 1 mappings after UnchangedMapper2:");
+                //for (int i = 0; i < file1.getNumberOfLines(); i++) {
+                        //LineData line = file1.getLineObjectAtIndex(i);
+                        //System.out.println("Line " + (i + 1) + ": mapsToIndex = " + line.getMapsToIndex());
+                //}
+
+                ContentSimHash2.compute(file1);
+                ContentSimHash2.compute(file2);
                 ContextSimHash.compute(file1);
                 ContextSimHash.compute(file2);
-                
-                ContentSimHash.compute(file1);
-                ContentSimHash.compute(file2);
 
+                //mapping changed lines
+                ChangedMapper.map(file1, file2);
+
+                //show the mapping
+                //for (int i = 0; i < file1.getNumberOfLines(); i++) {
+                        //LineData line = file1.getLineObjectAtIndex(i);
+                        //System.out.println("Line " + (i + 1) + ": mapsToIndex = " + line.getMapsToIndex() +
+                                //" | content = \"" + line.getContent() + "\"");
+                //}
+
+                //display the desired output
+                System.out.println("\nMapping file1 to file2:");
+                for (int i = 0; i < file1.getNumberOfLines(); i++) {
+                        LineData line = file1.getLineObjectAtIndex(i);
+
+                        //skip blank lines
+                        if (line.getContent().isBlank()) {
+                                continue;
+                        }
+                        int mapped = line.getMapsToIndex();
+                        System.out.println("line " + (i + 1) + " ---> line " + mapped);
+                }
         }
 }
