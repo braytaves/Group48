@@ -30,7 +30,7 @@ public class ChangedMapper {
                 }
 
                 //compute the content similarity (used ContentSimHash2 class)
-                int contentDist = ContentSimHash.hammingDistance(line1.contentHash, line2.contentHash);
+                int contentDist = ContentSimHash2.hammingDistance(line1.contentHash, line2.contentHash);
                 double contentSim = 1.0 - contentDist / 64.0;
 
                 //compute the context similarity (Uses ContextSimHash class)

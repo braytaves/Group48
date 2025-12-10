@@ -16,15 +16,19 @@ public class main {
         public static void main(String[] args) {
 
                 //comparing asdf_1 to asdf_2
-                String path8 = "C:\\Users\\Brayden\\Desktop\\asdf_1.java";
-                String path9 = "C:\\Users\\Brayden\\Desktop\\asdf_2.java";
+                String path8 = "data/provided/asdf_1.java";
+                String path9 = "data/provided/asdf_2.java";
+                String path6 = "data/provided/CPListLabelProvider_1.java";
+                String path7 = "data/provided/CPListLabelProvider_2.java";
 
 
                 FileData file1 = new FileData(path8);
                 FileData file2 = new FileData(path9);
+                FileData file3 = new FileData(path6);
+                FileData file4 = new FileData(path7);
 
-                Preprocessor.process(file1);
-                Preprocessor.process(file2);
+                Preprocessor.process(file3);
+                Preprocessor.process(file4);
 
                 //mapping unchanged lines
                 UnchangedMapper2.map(file1, file2);
