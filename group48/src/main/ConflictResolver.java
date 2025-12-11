@@ -5,57 +5,83 @@ import java.util.List;
 
 public class ConflictResolver {
 
-    private static final double THRESHOLD = 0.58;
+    private static final double THRESHOLD = 0.5;
+
+    private static class Pair {
+        int leftIdx;
+        int rightIdx;
+        double sim;
+
+        Pair(int l, int r, double s) {
+            this.leftIdx = l;
+            this.rightIdx = r;
+            this.sim = s;
+        }
+    }
 
     public static void resolve(FileData left, FileData right) {
-
         List<LineData> linesA = left.getLineObjects();
         List<LineData> linesB = right.getLineObjects();
-        List<Integer> consumedCandidates = new ArrayList<>();
+
+        List<Pair> pairs = new ArrayList<>();
+
+        // 1) build all (left, right, sim) pairs from candidates
         for (LineData lineA : linesA) {
+            if (isResolved(lineA)) continue;
 
-            if (isResolved(lineA))
-                continue;
+            int aIdx = lineA.getIndex();
 
-            List<Integer> candidates = lineA.getCandidates();
-
-            double bestSim = -1.0;
-            int bestRightIdx = -1;
-
-            // --- evaluate ALL candidates ---
-            for (int candidateIndex : candidates) {
-                if (consumedCandidates.contains(candidateIndex))
-                    continue;
+            for (int candidateIndex : lineA.getCandidates()) {
                 LineData lineB = linesB.get(candidateIndex - 1);
 
                 double sim = TextSimilarity.getSimilarity(lineA, lineB);
-                System.out.printf("%-3d-> %-3d %4.4f%n",
-                         lineA.getIndex(),
-                         candidateIndex,
-                         sim);
 
-                if (sim > bestSim) {
-                    bestSim = sim;
-                    bestRightIdx = candidateIndex;
+                if (Flags.logAllCandidateSims) {
+                    System.out.printf("%-3d-> %-3d %4.4f%n",
+                            aIdx, candidateIndex, sim);
                 }
-            }
 
-            // --- assign mapping if threshold passes ---
-            if (bestSim >= THRESHOLD) {
-                lineA.clearMappings();
-                lineA.addMapping(bestRightIdx);
-                consumedCandidates.add(bestRightIdx);
-            } else {
-                lineA.clearMappings(); // no good candidates
-                lineA.addMapping(-1); // no good candidates
+                pairs.add(new Pair(aIdx, candidateIndex, sim));
             }
         }
 
-        // Step 5 (splits) will attach extra right lines to lineA if needed
-        // detectPotentialSplits(left, right);
+        // 2) sort all pairs by similarity DESC
+        pairs.sort((p1, p2) -> Double.compare(p2.sim, p1.sim));
+
+        boolean[] leftUsed  = new boolean[linesA.size() + 1]; // 1-based
+        boolean[] rightUsed = new boolean[linesB.size() + 1];
+
+        // 3) greedily assign best pairs
+        for (Pair p : pairs) {
+            if (p.sim < THRESHOLD) break; // everything else is worse
+
+            if (leftUsed[p.leftIdx] || rightUsed[p.rightIdx]) continue;
+
+            LineData lineA = linesA.get(p.leftIdx - 1);
+
+            lineA.clearMappings();
+            lineA.addMapping(p.rightIdx);
+
+            leftUsed[p.leftIdx] = true;
+            rightUsed[p.rightIdx] = true;
+        }
+
+        // 4) any unresolved left lines (that aren’t blank/identical) get -1
+        for (LineData lineA : linesA) {
+            if (isResolved(lineA)) continue;
+
+            int idx = lineA.getIndex();
+            if (!leftUsed[idx]) {
+                lineA.clearMappings();
+                lineA.addMapping(-1);
+            }
+        }
     }
 
     private static boolean isResolved(LineData line) {
-        return (line.wasIdenticallyMatched() || line.isBlankLine || line.getCandidates().isEmpty());
+        return line.wasIdenticallyMatched()
+                || line.isBlankLine
+                || line.getCandidates().isEmpty();
     }
 }
+

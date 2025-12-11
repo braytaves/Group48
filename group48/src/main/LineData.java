@@ -17,6 +17,7 @@ public class LineData {
     long contextHash;
     boolean identicallyMatched = false; // mark lines as resolved after being matched in step 2 (IdenticalLines)
     boolean isBlankLine = false;
+    boolean isComment = false;
 
     public void markBlankLine() {
         isBlankLine = true;
@@ -24,6 +25,10 @@ public class LineData {
     public void markIdenticallyMatched() {
         identicallyMatched = true;
     }
+    public void markComment() {
+        isComment = true;
+    }
+ 
 
     public boolean wasIdenticallyMatched() {
         return identicallyMatched;
@@ -37,7 +42,7 @@ public class LineData {
         this.contentTokens = contentTokens;
     }
     public void printCandidates() {
-        System.out.println("Candidates for line " + index + ": " + candidates);
+        System.out.println("Candidates: " + candidates);
     }
     public List<Integer> getCandidates() {
         return candidates;
@@ -121,11 +126,11 @@ public class LineData {
     }
 
     public void PrintContent() {
-        System.out.println(index + ": " + content);
+        System.out.println('"'+ content+'\n');
     }
 
     public void PrintContextTokens() { // added "Tokens" to the variable name to match "PrintContentTokens"
-        System.out.println("Line " + index + ": ");
+        System.out.print("Context: ");
         for (String token : contextTokens) {
             System.out.print("[ " + token + " ], ");
         }

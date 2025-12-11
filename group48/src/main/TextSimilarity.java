@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 public class TextSimilarity {
-    
+
     public static double getSimilarity(LineData lineA, LineData lineB) {
+        //System.out.println("Comparing... "+ lineA.getContent() + "  <->  " + lineB.getContent());
         double contentSimilarity = contentSim(lineA.getContent(), lineB.getContent());
         double contextSimilarity = contextSim(lineA.contextTokens, lineB.contextTokens);
         return combined(contentSimilarity, contextSimilarity);
@@ -47,7 +48,6 @@ public class TextSimilarity {
                         dp[i - 1][j - 1] + cost);
             }
         }
-
         return dp[n][m];
     }
 
@@ -97,6 +97,12 @@ public class TextSimilarity {
     // COMBINED SIMILARITY (as per LHDiff slide)
     // ------------------------------------------------------------
     public static double combined(double contentSim, double contextSim) {
-        return 0.6 * contentSim + 0.4 * contextSim;
+        double contentProportion = 0.6 * contentSim;
+        double contextProportion = 0.4 * contextSim;
+        if(Flags.logSimProportions) {
+            System.out.printf("Combined Similarity: Content %.4f, Context %.4f, Total %.4f%n",
+                    contentProportion, contextProportion, contentProportion + contextProportion);
+        }
+        return contentProportion + contextProportion;
     }
 }

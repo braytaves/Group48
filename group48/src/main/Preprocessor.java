@@ -26,71 +26,65 @@ public class Preprocessor {
     // like space or tab character
     // to be 1 space long. All characters are converted to lowercase
     public static void normalize(FileData file, List<String> rawLines) {
-        List<String> normalizedLines = new ArrayList<>();
-        List<List<String>> contentTokens = new ArrayList<>();
-        int index = 1;
+    List<String> normalizedLines = new ArrayList<>();
+    List<List<String>> contentTokens = new ArrayList<>();
+    int index = 1;
 
-        for (String line : rawLines) {
-            line = line.replaceAll("\\p{C}", "").trim();
+    for (String line : rawLines) {
+        line = line.replaceAll("\\p{C}", "").trim();
 
-            // If blank → no tokens
-            if (line.isEmpty()) {
-                LineData ld = new LineData(index, "", new ArrayList<>());
-                file.addLineObject(ld);
-                normalizedLines.add("");
-                ld.markBlankLine();
-                contentTokens.add(new ArrayList<>());
-                index++;
-                continue;
-            }
-
-            List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
-
-            // lowercase
-            for (int i = 0; i < parts.size(); i++) {
-                parts.set(i, parts.get(i).toLowerCase());
-            }
-
-            // merge trailing ";"
-            if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
-                int last = parts.size() - 1;
-                parts.set(last - 1, parts.get(last - 1) + ";");
-                parts.remove(last);
-            }
-            for (int i = 0; i < parts.size(); i++) {
-                parts.set(i, normalizeToken(parts.get(i)));
-            }
-            //System.out.println(parts);
-            String result = String.join(" ", parts);
-
-            LineData ld = new LineData(index, result, parts);
+        // If blank → no tokens
+        if (line.isEmpty()) {
+            LineData ld = new LineData(index, "", new ArrayList<>());
             file.addLineObject(ld);
-
-            normalizedLines.add(result);
-            contentTokens.add(parts);
+            normalizedLines.add("");
+            ld.markBlankLine();
+            contentTokens.add(new ArrayList<>());
             index++;
+            continue;
         }
-    }
-    //method for reducing repeated characters (used once in the compute method above)
-    private static String normalizeToken(String token) {
-        StringBuilder sb = new StringBuilder();
-        char last = 0; //tracks the last character
-        int repeatCount = 0; //tracks how many times a character repeats
 
-        for (char c : token.toCharArray()) {
-            if (c == last) {
-                repeatCount++;
-                if (repeatCount < 2) { //keeps only the first repetition
-                    sb.append(c);
-                }
-            } else {
-                sb.append(c);
-                last = c;
-                repeatCount = 0;
-            }
+        // ---------------------------------------------------------
+        // DETECT FULL-LINE COMMENTS
+        // ---------------------------------------------------------
+        boolean isComment =
+                line.startsWith("//")  ||
+                line.startsWith("/*")  ||
+                line.startsWith("/**") ||
+                line.startsWith("*")   ||    // part of a block comment
+                line.startsWith("*/");       // block comment close
+
+        List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
+
+        // lowercase
+        for (int i = 0; i < parts.size(); i++) {
+            parts.set(i, parts.get(i).toLowerCase());
         }
-        return sb.toString().toLowerCase();
+
+        // merge trailing ";"
+        if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
+            int last = parts.size() - 1;
+            parts.set(last - 1, parts.get(last - 1) + ";");
+            parts.remove(last);
+        }
+
+        String result = String.join(" ", parts);
+
+        LineData ld = new LineData(index, result, parts);
+
+        if (isComment) {
+            ld.markComment();
+        }
+
+        file.addLineObject(ld);
+
+        normalizedLines.add(result);
+        contentTokens.add(parts);
+        index++;
     }
+}
+
+    
      
 
     public static void distributeContext(FileData file) {
