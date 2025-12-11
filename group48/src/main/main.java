@@ -19,15 +19,20 @@ public class main {
                 // comparing asdf_1 to asdf_2
                 String path1 = "data/provided/ASTResolving_1.java";
                 String path2 = "data/provided/ASTResolving_2.java";
-                String path3 = "data/provided/asdf_1.java";
-                String path4 = "data/provided/asdf_2.java";
-                String path6 = "data/contributed/GameEntity_A.java";
-                String path7 = "data/contributed/GameEntity_B.java";
+                String path3 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\asdf_1.java";
+                String path4 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\asdf_2.java";
+                String path6 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\TabFolder_1.java";
+                String path7 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\TabFolder_2.java";
+                String path8 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\JavaPerspectiveFactory_1.java";
+                String path9 = "C:\\Users\\Matteus\\Desktop\\Uni\\fall\\intro\\Group48\\data\\JavaPerspectiveFactory_2.java";
+
 
                 // FileData file1 = new FileData(path8);
                 // FileData file2 = new FileData(path9);
-                FileData file1 = new FileData(path3);
-                FileData file2 = new FileData(path4);
+                // FileData file1 = new FileData(path3);
+                // FileData file2 = new FileData(path4);
+                FileData file1 = new FileData(path8);
+                FileData file2 = new FileData(path9);
 
                 Preprocessor.process(file1);
                 Preprocessor.process(file2);
@@ -41,12 +46,12 @@ public class main {
                 SimHash.compute(file1);
                 SimHash.compute(file2);
                 CandidateSelector.generateCandidates(file1, file2, 15);
-                file1.printCandidates();
+                //file1.printCandidates();
                 SimHash.compute(file1);
                 // mapping changed lines
                 ConflictResolver.resolve(file1, file2);
 
-                displayResults(file1, file2);
+                //displayResults(file1, file2);
         }
 
         private static void displayResults(FileData file1, FileData file2) {

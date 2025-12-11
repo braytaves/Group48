@@ -30,9 +30,9 @@ public class ConflictResolver {
 
                 double sim = TextSimilarity.getSimilarity(lineA, lineB);
                 System.out.printf("%-3d-> %-3d %4.4f%n",
-                        lineA.getIndex(),
-                        candidateIndex,
-                        sim);
+                         lineA.getIndex(),
+                         candidateIndex,
+                         sim);
 
                 if (sim > bestSim) {
                     bestSim = sim;

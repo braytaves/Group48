@@ -60,7 +60,7 @@ public class Preprocessor {
             for (int i = 0; i < parts.size(); i++) {
                 parts.set(i, normalizeToken(parts.get(i)));
             }
-            System.out.println(parts);
+            //System.out.println(parts);
             String result = String.join(" ", parts);
 
             LineData ld = new LineData(index, result, parts);
