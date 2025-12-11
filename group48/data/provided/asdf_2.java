@@ -1,5 +1,6 @@
-public class asdf
+class asdf
 {
+    
     public void f();
 
     public void g3333333333333333333();

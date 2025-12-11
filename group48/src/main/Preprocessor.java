@@ -29,37 +29,69 @@ public class Preprocessor {
         List<String> normalizedLines = new ArrayList<>();
         List<List<String>> contentTokens = new ArrayList<>();
         int index = 1;
+
         for (String line : rawLines) {
-            // Remove invisible unicode control characters (important)
-            line = line.replaceAll("\\p{C}", "");
-            line = line.trim();
-            // Split into parts as a mutable list
+            line = line.replaceAll("\\p{C}", "").trim();
+
+            // If blank → no tokens
+            if (line.isEmpty()) {
+                LineData ld = new LineData(index, "", new ArrayList<>());
+                file.addLineObject(ld);
+                normalizedLines.add("");
+                ld.markBlankLine();
+                contentTokens.add(new ArrayList<>());
+                index++;
+                continue;
+            }
+
             List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
 
-            // Lowercase all parts
+            // lowercase
             for (int i = 0; i < parts.size(); i++) {
                 parts.set(i, parts.get(i).toLowerCase());
             }
 
-            // If line ends with ";" as its own token -> merge it with previous token
+            // merge trailing ";"
             if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
                 int last = parts.size() - 1;
-                parts.set(last - 1, parts.get(last - 1) + ";"); // merge
-                parts.remove(last); // remove ";" token
+                parts.set(last - 1, parts.get(last - 1) + ";");
+                parts.remove(last);
             }
-
-            // Join all remaining parts with single spaces
+            for (int i = 0; i < parts.size(); i++) {
+                parts.set(i, normalizeToken(parts.get(i)));
+            }
+            System.out.println(parts);
             String result = String.join(" ", parts);
-            //System.out.println(result);
 
             LineData ld = new LineData(index, result, parts);
             file.addLineObject(ld);
-            index++;
 
             normalizedLines.add(result);
             contentTokens.add(parts);
+            index++;
         }
     }
+    //method for reducing repeated characters (used once in the compute method above)
+    private static String normalizeToken(String token) {
+        StringBuilder sb = new StringBuilder();
+        char last = 0; //tracks the last character
+        int repeatCount = 0; //tracks how many times a character repeats
+
+        for (char c : token.toCharArray()) {
+            if (c == last) {
+                repeatCount++;
+                if (repeatCount < 2) { //keeps only the first repetition
+                    sb.append(c);
+                }
+            } else {
+                sb.append(c);
+                last = c;
+                repeatCount = 0;
+            }
+        }
+        return sb.toString().toLowerCase();
+    }
+     
 
     public static void distributeContext(FileData file) {
         List<LineData> lines = file.getLineObjects();
@@ -79,7 +111,6 @@ public class Preprocessor {
             lines.get(i).setContextTokens(contextTokens);
         }
     }
-
 
     // input: filePath, ouput: List of all lines in the file, as Strings
     public static List<String> readFile(String p) {

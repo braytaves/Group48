@@ -18,30 +18,42 @@ public class FileData {
             }
         }
     }
-    public void printContextsTokens() { //added "Tokens" to variable name to match "printContentTokens" variable
+
+    public void printContextTokens() { // added "Tokens" to variable name to match "printContentTokens" variable
         System.out.println("\nContext tokens of file: '" + path + "'\n");
 
         for (LineData lineData : lineObjects) {
             lineData.PrintContextTokens();
         }
     }
+
     public void printContentTokens() {
         for (LineData lineData : lineObjects) {
             lineData.PrintContentTokens();
         }
     }
+
     public void printContents() {
         System.out.println("Normalized Contents of file: '" + path + "'");
         for (LineData lineData : lineObjects) {
             lineData.PrintContent();
         }
     }
+
     public String getPath() {
         return path;
     }
 
     public List<LineData> getLineObjects() {
         return lineObjects;
+    }
+
+    public void printCandidates() {
+        for (LineData lineData : lineObjects) {
+            if (lineData.getCandidates().isEmpty())
+                continue;
+            lineData.printCandidates();
+        }
     }
 
     public int getNumberOfLines() {

@@ -1,4 +1,4 @@
-public class asdf
+class asdf
 {
     public void f();
 

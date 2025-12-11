@@ -5,7 +5,7 @@
 
 package main;
 
-public class UnchangedMapper2 {
+public class IdenticalLines {
 
     //this method simple updates MapsToIndex Variable for unchanged lines
     public static void map(FileData file1, FileData file2) {
@@ -23,11 +23,14 @@ public class UnchangedMapper2 {
             //compare the two lines
             if (line1.getContent().equals(line2.getContent())) {
                 //Set the setMapsToIndex attributes
-                line1.setMapsToIndex(i + 1);
+                System.out.printf("Line %d is unchanged.%n", i + 1);
+                line1.addMapping(i + 1);
                 line1.setDifferenceType("UNCHANGED");
-
-                line2.setMapsToIndex(i + 1);
+                line1.markIdenticallyMatched();
+                
+                line2.addMapping(i + 1);
                 line2.setDifferenceType("UNCHANGED");
+                line2.markIdenticallyMatched();
             }
         }
     }
