@@ -36,13 +36,14 @@ public class CandidateSelector {
                 if (p.x < leftIdx) {
                     //still before this left line: update prev
                     prev = p;
-                } else if (p.x > leftIdx) {
+                } 
+                else if (p.x > leftIdx) {
                     //first anchor after this left line: that's our next
                     next = p;
                     break;
-                } else {
-                    //p.x == leftIdx → this line itself is an anchor → we already skip identicallyMatched
-                    //so this case should not matter here
+                } 
+                else {
+
                 }
             }
 
