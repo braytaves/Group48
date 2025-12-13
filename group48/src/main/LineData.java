@@ -1,76 +1,138 @@
 package main;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class LineData {
     int index;
-    int mapsToIndex;
+    private List<Integer> mapsTo = new ArrayList<>();
+
     String differenceType;
     String content;
     List<String> contentTokens = new ArrayList<>();
     List<String> contextTokens = new ArrayList<>();
+
+    List<Integer> candidates = new ArrayList<>();
     long contentHash;
     long contextHash;
+    boolean identicallyMatched = false; // mark lines as resolved after being matched in step 2 (IdenticalLines)
+    boolean isBlankLine = false;
+    boolean isComment = false;
 
-    public LineData(int index, String content, List<String> contentTokens){
+    public void markBlankLine() {
+        isBlankLine = true;
+    }
+    public void markIdenticallyMatched() {
+        identicallyMatched = true;
+    }
+    public void markComment() {
+        isComment = true;
+    }
+ 
+
+    public boolean wasIdenticallyMatched() {
+        return identicallyMatched;
+    } public void setCandidates(List<Integer> candidateIndices) {
+        this.candidates = candidateIndices;
+    }
+
+    public LineData(int index, String content, List<String> contentTokens) {
         this.index = index;
         this.content = content;
         this.contentTokens = contentTokens;
     }
-    private void calculateSimhashes(){
-
+    public void printCandidates() {
+        System.out.println("Candidates: " + candidates);
     }
-    public int getIndex(){
+    public List<Integer> getCandidates() {
+        return candidates;
+    }
+    public int getIndex() {
         return index;
     }
-    public int getMapsToIndex(){
-        return mapsToIndex;
+
+    public List<Integer> getMappings() {
+        return mapsTo;
     }
-    public void setMapsToIndex(int mapsToIndex){
-        this.mapsToIndex = mapsToIndex;
+
+    public void addMapping(int newIndex) {
+        mapsTo.add(newIndex);
     }
-    public String getDifferenceType(){
+
+    public void printMappings() {
+        System.out.println(mapsTo);
+    }
+
+    public void clearMappings() {
+        mapsTo.clear();
+    }
+
+    public String getDifferenceType() {
         return differenceType;
     }
-    public void setDifferenceType(String differenceType){
+
+    public void setDifferenceType(String differenceType) {
         this.differenceType = differenceType;
     }
-    public String getContent(){
+
+    public String getContent() {
         return content;
     }
-  
-    public long getContentHash(){
+
+    public long getContentHash() {
         return contentHash;
     }
-    public long getContextHash(){
+    public void setContentHash(long hash) {
+        this.contentHash = hash;
+    }
+    public void setContextHash(long hash) {
+        this.contextHash = hash;
+    }
+    public void printContentHash() {
+        System.out.println("Content Hash of line " + index + ": " + contentHash);
+    }
+
+    public long getContextHash() {
         return contextHash;
     }
-    public List<String> getContentTokens(){
+
+    public List<String> getContentTokens() {
         return contentTokens;
     }
-    public void setContentTokens(List<String> tokens){
+    public List<String> getContextTokens() {
+        return contextTokens;
+    }
+
+    public void setContentTokens(List<String> tokens) {
         this.contentTokens = tokens;
     }
-    public void setContextTokens(List<String> tokens){
+
+    public void setContextTokens(List<String> tokens) {
         this.contextTokens = tokens;
     }
-    public void PrintMapping(){
-        System.out.println("line " + index + " ---> line " + mapsToIndex);
+
+    public void PrintMapping() {
+        System.out.println("line " + index + " ---> line " + mapsTo);
     }
-    public void PrintContentTokens(){
-        System.out.println("Content Tokens " + index + ": ");
-        for (String token : contentTokens){
-            System.out.print("[ " +token + " ], ");
+
+    public void PrintContentTokens() {
+        if(!contentTokens.isEmpty()) {
+        System.out.println("Content Token " + index + ": ");
+            for (String token : contentTokens) {
+                System.out.print("[ " + token + " ], ");
+            }
+            System.out.println("");
         }
-        System.out.println("\n");
     }
-    public void PrintContent(){
-        System.out.println(index + ": " + content);
+
+    public void PrintContent() {
+        System.out.println('"'+ content+'\n');
     }
-    public void PrintContext(){
-        System.out.println("Line " + index + ": ");
-        for (String token : contextTokens){
-            System.out.print("[ " +token + " ], ");
+
+    public void PrintContextTokens() { // added "Tokens" to the variable name to match "PrintContentTokens"
+        System.out.print("Context: ");
+        for (String token : contextTokens) {
+            System.out.print("[ " + token + " ], ");
         }
         System.out.println("\n");
     }

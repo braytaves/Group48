@@ -26,60 +26,85 @@ public class Preprocessor {
     // like space or tab character
     // to be 1 space long. All characters are converted to lowercase
     public static void normalize(FileData file, List<String> rawLines) {
-        List<String> normalizedLines = new ArrayList<>();
-        List<List<String>> contentTokens = new ArrayList<>();
-        int index = 1;
-        for (String line : rawLines) {
-            // Remove invisible unicode control characters (important)
-            line = line.replaceAll("\\p{C}", "");
-            line = line.trim();
-            // Split into parts as a mutable list
-            List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
+    List<String> normalizedLines = new ArrayList<>();
+    List<List<String>> contentTokens = new ArrayList<>();
+    int index = 1;
 
-            // Lowercase all parts
-            for (int i = 0; i < parts.size(); i++) {
-                parts.set(i, parts.get(i).toLowerCase());
-            }
+    for (String line : rawLines) {
+        line = line.replaceAll("\\p{C}", "").trim();
 
-            // If line ends with ";" as its own token -> merge it with previous token
-            if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
-                int last = parts.size() - 1;
-                parts.set(last - 1, parts.get(last - 1) + ";"); // merge
-                parts.remove(last); // remove ";" token
-            }
-
-            // Join all remaining parts with single spaces
-            String result = String.join(" ", parts);
-            //System.out.println(result);
-
-            LineData ld = new LineData(index, result, parts);
+        // If blank → no tokens
+        if (line.isEmpty()) {
+            LineData ld = new LineData(index, "", new ArrayList<>());
             file.addLineObject(ld);
+            normalizedLines.add("");
+            ld.markBlankLine();
+            contentTokens.add(new ArrayList<>());
             index++;
-
-            normalizedLines.add(result);
-            contentTokens.add(parts);
-        }
-    }
-
-    public static void distributeContext(FileData file) {
-    List<LineData> lines = file.getLineObjects();
-    int total = lines.size();
-
-    for (int i = 0; i < total; i++) {
-        List<String> contextTokens = new ArrayList<>();
-
-        // gather lines from i-4 through i+4
-        for (int d = -4; d <= 4; d++) {
-            int idx = i + d;
-            if (idx >= 0 && idx < total) {
-                contextTokens.addAll(lines.get(idx).getContentTokens());
-            }
+            continue;
         }
 
-        lines.get(i).setContextTokens(contextTokens);
+        // ---------------------------------------------------------
+        // DETECT FULL-LINE COMMENTS
+        // ---------------------------------------------------------
+        boolean isComment =
+                line.startsWith("//")  ||
+                line.startsWith("/*")  ||
+                line.startsWith("/**") ||
+                line.startsWith("*")   ||    // part of a block comment
+                line.startsWith("*/");       // block comment close
+
+        List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
+
+        // lowercase
+        for (int i = 0; i < parts.size(); i++) {
+            parts.set(i, parts.get(i).toLowerCase());
+        }
+
+        // merge trailing ";"
+        if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
+            int last = parts.size() - 1;
+            parts.set(last - 1, parts.get(last - 1) + ";");
+            parts.remove(last);
+        }
+
+        String result = String.join(" ", parts);
+
+        LineData ld = new LineData(index, result, parts);
+
+        if (isComment) {
+            ld.markComment();
+        }
+
+        file.addLineObject(ld);
+
+        normalizedLines.add(result);
+        contentTokens.add(parts);
+        index++;
     }
 }
 
+    
+     
+
+    public static void distributeContext(FileData file) {
+        List<LineData> lines = file.getLineObjects();
+        int total = lines.size();
+
+        for (int i = 0; i < total; i++) {
+            List<String> contextTokens = new ArrayList<>();
+
+            // gather lines from i-4 through i+4
+            for (int d = -4; d <= 4; d++) {
+                int idx = i + d;
+                if (idx >= 0 && idx < total) {
+                    contextTokens.addAll(lines.get(idx).getContentTokens());
+                }
+            }
+
+            lines.get(i).setContextTokens(contextTokens);
+        }
+    }
 
     // input: filePath, ouput: List of all lines in the file, as Strings
     public static List<String> readFile(String p) {
