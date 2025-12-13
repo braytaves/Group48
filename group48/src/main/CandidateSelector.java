@@ -9,7 +9,7 @@ public class CandidateSelector {
     public static void generateCandidates(FileData left, FileData right) {
         int nRight = right.getLineObjects().size();
 
-        // 10% of right file, but at least 15, at most 50
+        //10% of right file, but at least 15, at most 50
         int k = Math.max(15, Math.min((int) (0.10 * nRight), 50));
 
         List<LineData> leftLines  = left.getLineObjects();
@@ -20,7 +20,7 @@ public class CandidateSelector {
 
         for (LineData L : leftLines) {
 
-            // skip ignorable / non-changed lines on the left
+            //skip ignorable / non-changed lines on the left
             if (L.isBlankLine || L.isComment || L.wasIdenticallyMatched()) {
                 L.setCandidates(new ArrayList<>());
                 continue;
@@ -28,21 +28,21 @@ public class CandidateSelector {
 
             int leftIdx = L.getIndex();
 
-            // ---- determine region bounds from anchors ----
+            //determine region bounds from anchors 
             Point prev = new Point(0, 0);                 // default start anchor
             Point next = new Point(nLeft + 1, nRight + 1); // default end anchor
 
             for (Point p : anchors) {
                 if (p.x < leftIdx) {
-                    // still before this left line: update prev
+                    //still before this left line: update prev
                     prev = p;
                 } else if (p.x > leftIdx) {
-                    // first anchor after this left line: that's our next
+                    //first anchor after this left line: that's our next
                     next = p;
                     break;
                 } else {
-                    // p.x == leftIdx → this line itself is an anchor → we already skip identicallyMatched
-                    // so this case should not matter here
+                    //p.x == leftIdx → this line itself is an anchor → we already skip identicallyMatched
+                    //so this case should not matter here
                 }
             }
 
@@ -51,17 +51,17 @@ public class CandidateSelector {
 
             List<Candidate> all = new ArrayList<>();
 
-            // ---- scan only right lines inside this region ----
+            //scan only right lines inside this region
             for (LineData R : rightLines) {
 
                 int rIdx = R.getIndex();
 
-                // enforce region firewall
+                //enforce region firewall
                 if (rIdx < rightStart || rIdx > rightEnd) {
                     continue;
                 }
 
-                // skip blanks, comments, and already matched lines on the right
+                //skip blanks, comments, and already matched lines on the right
                 if (R.isBlankLine || R.isComment || R.wasIdenticallyMatched())
                     continue;
 
@@ -87,7 +87,7 @@ public class CandidateSelector {
                 all.add(new Candidate(rIdx, sim));
             }
 
-            // sort by similarity DESC (highest first)
+            //sort by similarity DESC (highest first)
             all.sort((a, b) -> Double.compare(b.sim, a.sim));
 
             List<Integer> topK = new ArrayList<>();
@@ -99,7 +99,7 @@ public class CandidateSelector {
         }
     }
 
-    // helper small class
+    //helper small class
     private static class Candidate {
         int index;
         double sim;
