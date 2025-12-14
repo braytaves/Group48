@@ -12,15 +12,10 @@ public class SimHash {
 
         for (LineData line : lines) {
             
-            // Convert tokens to one combined string
-            // String contentTokenString = String.join(" ", line.getContentTokens());
-            // String contextTokenString = String.join(" ", line.getContextTokens());
-            
+            //Convert tokens to one combined string
+        
             long contentHash = getHash(line.getContentTokens());
             long contextHash = getHash(line.getContextTokens());
-            
-            // long contentHash = getContentSimHash(contentTokenString);
-            // long contextHash = getContextSimHash(contextTokenString);
 
             line.setContentHash(contentHash);
             line.setContextHash(contextHash);
@@ -32,9 +27,7 @@ public class SimHash {
         int[] bitVector = new int[HASH_BITS];
 
         for (String token : tokens) {
-            //long h = fnv(token); // base hashing
-
-            long h = token.hashCode(); // base hashing
+            long h = token.hashCode(); //base hashing
 
             for (int i = 0; i < HASH_BITS; i++) {
                 long mask = 1L << i;
@@ -56,12 +49,12 @@ public class SimHash {
     private static long getContentSimHash(String text) {
         int[] bitVector = new int[HASH_BITS];
         if (text == null || text.isEmpty())
-            return 0; // ignore blank lines
+            return 0; //ignore blank lines
 
-        String[] tokens = text.split("\\s+"); // splits the line into tokens
+        String[] tokens = text.split("\\s+"); //splits the line into tokens
         for (String token : tokens) {
-            //long h = fnv(token); // each token gets a hash number
-            long h = token.hashCode(); // base hashing
+            //long h = fnv(token); //each token gets a hash number
+            long h = token.hashCode();
 
             for (int i = 0; i < HASH_BITS; i++) {
                 long mask = 1L << i;
@@ -79,11 +72,9 @@ public class SimHash {
         return hash;
     }
 
-    // fnv, apparently better than the build in hash code (this is used in the
-    // getSimHash method
     private static long fnv(String s) {
-        final long fnv_number = 0x100000001b3L; // special prime number
-        long hash = 0xcbf29ce484222325L; // specific offset basis
+        final long fnv_number = 0x100000001b3L; //special prime number
+        long hash = 0xcbf29ce484222325L; //specific offset basis
         // compute the hash number
         for (char c : s.toCharArray()) {
             hash ^= c;
@@ -101,8 +92,7 @@ public class SimHash {
         String[] tokens = text.split("\\s+");
 
         for (String token : tokens) {
-            // long h = fnv(token); // base hashing
-            long h = token.hashCode(); // base hashing
+            long h = token.hashCode(); 
 
             for (int i = 0; i < HASH_BITS; i++) {
                 long mask = 1L << i;
