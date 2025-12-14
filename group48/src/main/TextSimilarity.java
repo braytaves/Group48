@@ -13,9 +13,7 @@ public class TextSimilarity {
         return combined(contentSimilarity, contextSimilarity);
     }
 
-    // ------------------------------------------------------------
-    // CONTENT SIMILARITY (Normalized Levenshtein)
-    // ------------------------------------------------------------
+    //CONTENT SIMILARITY (Normalized Levenshtein)
     public static double contentSim(String a, String b) {
         if (a.isEmpty() && b.isEmpty())
             return 1.0;
@@ -25,7 +23,7 @@ public class TextSimilarity {
         return 1.0 - ((double) dist / maxLen);
     }
 
-    // Standard Levenshtein distance
+    //Standard Levenshtein distance
     private static int levenshtein(String a, String b) {
         int n = a.length();
         int m = b.length();
@@ -51,9 +49,7 @@ public class TextSimilarity {
         return dp[n][m];
     }
 
-    // ------------------------------------------------------------
-    // CONTEXT SIMILARITY (Cosine over token-frequency vectors)
-    // ------------------------------------------------------------
+    //CONTEXT SIMILARITY (Cosine over token-frequency vectors)
     public static double contextSim(List<String> a, List<String> b) {
         if (a.isEmpty() && b.isEmpty())
             return 1.0;
@@ -93,9 +89,8 @@ public class TextSimilarity {
         return Math.sqrt(sum);
     }
 
-    // ------------------------------------------------------------
-    // COMBINED SIMILARITY (as per LHDiff slide)
-    // ------------------------------------------------------------
+    //COMBINED SIMILARITY (as per LHDiff slide)
+
     public static double combined(double contentSim, double contextSim) {
         double contentProportion = 0.6 * contentSim;
         double contextProportion = 0.4 * contextSim;
