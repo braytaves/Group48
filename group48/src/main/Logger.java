@@ -5,7 +5,7 @@ import java.awt.Point;
 
 public class Logger {
     public static void log(FileData file, int s, int e) {
-        // display the desired output
+        //display the desired output
         int start = Flags.finalOutputRange ? s - 1 : 0;
         int end = Flags.finalOutputRange ? e : file.getNumberOfLines();
         end = Math.min(end, file.getNumberOfLines());

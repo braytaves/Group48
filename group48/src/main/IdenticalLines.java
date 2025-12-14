@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Collections;
 
 public class IdenticalLines {
-    // Use LCS (Longest-Common-Subsequence) Algorithm to determine correct mappings
+    //Use LCS (Longest-Common-Subsequence) Algorithm to determine correct mappings
     public static void map(FileData file1, FileData file2) {
         List<LineData> linesObjs1 = file1.getLineObjects();
         List<LineData> linesObjs2 = file2.getLineObjects();
@@ -13,7 +13,7 @@ public class IdenticalLines {
 
         int[][] dp = new int[rows][cols];
 
-        // BUILD / POPULATE TABLE
+        //BUILD / POPULATE TABLE
         for (int i = 1; i < rows; i++) {          // ith line of file1
             LineData oldLineObj = file1.getLineObjectAtIndex(i - 1);
             String oldLine = oldLineObj.getContent();
@@ -28,14 +28,15 @@ public class IdenticalLines {
 
                 if (!skipOld && oldLine.equals(newLine)) { // match
                     dp[i][j] = dp[i - 1][j - 1] + 1;
-                } else {                                   // non-match
+                } 
+                else {                                   // non-match
                     dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
                 }
             }
         }
 
-        // BACKTRACK THROUGH TABLE ... DETERMINE MAPPINGS
-        int row = rows - 1; // start at bottom-right
+        //backtrack throug table
+        int row = rows - 1; //start at bottom-right
         int col = cols - 1;
 
         while (row > 0 && col > 0) {
@@ -49,21 +50,15 @@ public class IdenticalLines {
                     oldLineObj.isComment;
 
             if (!skipOld && oldLine.equals(newLine)) {
-                // match = mapping found
-                // if (Flags.IdenticalMatch) {
-                //     System.out.printf("Mapping found: line %d ---> line %d%n", row, col);
-                // }
+
                 file1.addAnchorPoint(new java.awt.Point(row, col));
                 oldLineObj.addMapping(col);
                 oldLineObj.markIdenticallyMatched();
 
-                // if you want symmetry, you *could* also:
-                // newLineObj.addMapping(row);
-                // newLineObj.markIdenticallyMatched();
-
                 row--;
                 col--;
-            } else {
+            } 
+            else {
                 //Main.identicalMatches.add(new java.awt.Point(-1, -1));
 
                 int upVal = dp[row - 1][col];

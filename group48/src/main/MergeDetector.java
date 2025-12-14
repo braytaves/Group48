@@ -4,7 +4,6 @@ import java.util.List;
 
 public class MergeDetector {
 
-    // You can tweak this; I started near your sim threshold (0.7)
     private static final double MERGE_SIM_THRESHOLD = 0.75;
 
     /**
@@ -34,13 +33,13 @@ public class MergeDetector {
             double bestSim = 0.0;
             int bestEnd = -1;
 
-            // Try each line on the right as a potential merge target.
+            //Try each line on the right as a potential merge target.
             for (int j = 0; j < nRight; j++) {
                 LineData rightLine = right.get(j);
                 String rightText = rightLine.getContent();
 
-                // Grow a block of consecutive left lines [i..k],
-                // as long as they are still "deleted" (mapsToIndex == -1).
+                //Grow a block of consecutive left lines [i..k],
+                //as long as they are still "deleted" (mapsToIndex == -1).
                 StringBuilder blockBuilder = new StringBuilder();
                 double prevSim = -1.0;
 
@@ -56,28 +55,10 @@ public class MergeDetector {
                     }
                     blockBuilder.append(leftK.getContent());
 
-                    // double sim = TextSimilarity.normalizedSimilarity(
-                    //         blockBuilder.toString(),
-                    //         rightText);
-
-                    // Slide condition style: if similarity increases, keep growing; if it drops,
-                    // stop.
-                    // if (sim >= prevSim) {
-                    //     prevSim = sim;
-
-                    //     // Only care about blocks with at least 2 lines (true merge)
-                    //     if (k > i && sim > bestSim) {
-                    //         bestSim = sim;
-                    //         bestRightIndex = j;
-                    //         bestEnd = k;
-                    //     }
-                    // } else {
-                    //     break; // similarity decreased
-                    // }
                 }
             }
 
-            // If we found a good merge block [i..bestEnd] -> right[bestRightIndex]
+            //If we found a good merge block [i..bestEnd] -> right[bestRightIndex]
             if (bestRightIndex != -1 && bestEnd > i && bestSim >= MERGE_SIM_THRESHOLD) {
                 int targetLineNum = bestRightIndex + 1; // 1-based
 
@@ -90,12 +71,12 @@ public class MergeDetector {
 
                 LineData rightLine = right.get(bestRightIndex);
 
-                // If right-line has no mappings yet, add the representative original index
+                //if right-line has no mappings yet, add the representative original index
                 if (rightLine.getMappings().isEmpty()) {
                     rightLine.addMapping(i + 1); // i is start of block
                 }
 
-                // Skip over processed block
+                //Skip over processed block
                 i = bestEnd;
 
             }

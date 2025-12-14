@@ -25,7 +25,7 @@ public class ConflictResolver {
 
         List<Pair> pairs = new ArrayList<>();
 
-        // 1) build all (left, right, sim) pairs from candidates
+        //build all (left, right, sim) pairs from candidates
         for (LineData lineA : linesA) {
             if (isResolved(lineA)) continue;
 
@@ -45,13 +45,13 @@ public class ConflictResolver {
             }
         }
 
-        // 2) sort all pairs by similarity DESC
+        //sort all pairs by similarity DESC
         pairs.sort((p1, p2) -> Double.compare(p2.sim, p1.sim));
 
         boolean[] leftUsed  = new boolean[linesA.size() + 1]; // 1-based
         boolean[] rightUsed = new boolean[linesB.size() + 1];
 
-        // 3) greedily assign best pairs
+        //greedily assign best pairs
         for (Pair p : pairs) {
             if (p.sim < THRESHOLD) break; // everything else is worse
 
@@ -66,7 +66,7 @@ public class ConflictResolver {
             rightUsed[p.rightIdx] = true;
         }
 
-        // 4) any unresolved left lines (that aren’t blank/identical) get -1
+        //any unresolved left lines (that aren’t blank/identical) get -1
         for (LineData lineA : linesA) {
             if (isResolved(lineA)) continue;
 

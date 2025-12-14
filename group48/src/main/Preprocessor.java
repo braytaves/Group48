@@ -9,22 +9,19 @@ import java.util.Arrays;
 
 public class Preprocessor {
 
-    // Wrapper method for full processing. Input: Path of file to process,
-    // Output: Normalized file as List of Strings (all lines) normalized
+    //Wrapper method for full processing. Input: Path of file to process,
+    //Output: Normalized file as List of Strings (all lines) normalized
     public static void process(FileData file) {
-        List<String> rawLines = readFile(file.getPath()); // get Lines from file
+        List<String> rawLines = readFile(file.getPath()); //get Lines from file
 
         if (rawLines.size() == 0) { // handle empty file
             System.out.println("File at path: " + file.getPath() + " is empty.");
             return;
         }
-        normalize(file, rawLines); // normalize
-        distributeContext(file); // distribute context to each line
+        normalize(file, rawLines);
+        distributeContext(file); //distribute context to each line
     }
-
-    // Normalization of a line normalizes all contiguous sequences of whitespace,
-    // like space or tab character
-    // to be 1 space long. All characters are converted to lowercase
+    //normilization function to remove excess whitespace
     public static void normalize(FileData file, List<String> rawLines) {
     List<String> normalizedLines = new ArrayList<>();
     List<List<String>> contentTokens = new ArrayList<>();
@@ -33,7 +30,7 @@ public class Preprocessor {
     for (String line : rawLines) {
         line = line.replaceAll("\\p{C}", "").trim();
 
-        // If blank → no tokens
+        //If blank → no tokens
         if (line.isEmpty()) {
             LineData ld = new LineData(index, "", new ArrayList<>());
             file.addLineObject(ld);
@@ -44,24 +41,21 @@ public class Preprocessor {
             continue;
         }
 
-        // ---------------------------------------------------------
-        // DETECT FULL-LINE COMMENTS
-        // ---------------------------------------------------------
         boolean isComment =
                 line.startsWith("//")  ||
                 line.startsWith("/*")  ||
                 line.startsWith("/**") ||
-                line.startsWith("*")   ||    // part of a block comment
-                line.startsWith("*/");       // block comment close
+                line.startsWith("*")   ||    //part of a block comment
+                line.startsWith("*/");       //block comment close
 
         List<String> parts = new ArrayList<>(Arrays.asList(line.split("\\s+")));
 
-        // lowercase
+        //lowercase
         for (int i = 0; i < parts.size(); i++) {
             parts.set(i, parts.get(i).toLowerCase());
         }
 
-        // merge trailing ";"
+        //merge trailing ";"
         if (!parts.isEmpty() && parts.get(parts.size() - 1).equals(";")) {
             int last = parts.size() - 1;
             parts.set(last - 1, parts.get(last - 1) + ";");
@@ -94,7 +88,7 @@ public class Preprocessor {
         for (int i = 0; i < total; i++) {
             List<String> contextTokens = new ArrayList<>();
 
-            // gather lines from i-4 through i+4
+            //gather lines from i-4 through i+4
             for (int d = -4; d <= 4; d++) {
                 int idx = i + d;
                 if (idx >= 0 && idx < total) {
@@ -106,7 +100,7 @@ public class Preprocessor {
         }
     }
 
-    // input: filePath, ouput: List of all lines in the file, as Strings
+    //input: filePath, ouput: List of all lines in the file, as Strings
     public static List<String> readFile(String p) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(p));) {

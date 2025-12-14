@@ -36,7 +36,7 @@ public class FileData {
         anchorPoints.add(p);
     }
 
-    public void printContextTokens() { // added "Tokens" to variable name to match "printContentTokens" variable
+    public void printContextTokens() { //added "Tokens" to variable name to match "printContentTokens" variable
         System.out.println("\nContext tokens of file: '" + path + "'\n");
 
         for (LineData lineData : lineObjects) {
